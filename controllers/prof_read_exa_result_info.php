@@ -15,7 +15,7 @@
     if($resGetIDAlums->num_rows > 0){
         while($rowGetIDAlum = $resGetIDAlums->fetch_assoc()){
             $idAsigAlum = $rowGetIDAlum['idExaInfAsigAlum'];
-            $sqlGetResultInfo = "SELECT * FROM $tExaResultInfo WHERE exa_info_asig_alum_id='$idAsigAlum' ";
+            $sqlGetResultInfo = " SELECT * FROM est_exa_result_info WHERE exa_info_asig_alum_id = '$idAsigAlum' ORDER BY est_exa_result_info.id DESC ";
             $resGetResultInfo = $con->query($sqlGetResultInfo);
             $nombreAlum = $rowGetIDAlum['nombreAlum'];
             $pregResp = '';
