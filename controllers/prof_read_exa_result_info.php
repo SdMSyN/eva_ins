@@ -7,15 +7,21 @@
     $ban = true;
     $idAsig = $_GET['idAsig']; 
     
-    $sqlGetIDAlums = "SELECT $tExaInfAsigAlum.id as idExaInfAsigAlum, $tAlum.nombre as nombreAlum "
-            . "FROM $tExaInfAsigAlum "
-            . "INNER JOIN $tAlum ON $tAlum.id=$tExaInfAsigAlum.alumno_id "
-            . "WHERE $tExaInfAsigAlum.exa_info_asig_id='$idAsig'  ";
+    $sqlGetIDAlums = "SELECT exa_info_asig_alum.id as idExaInfAsigAlum, usuarios_alumnos.nombre as nombreAlum, "
+            . "exa_info_asig.exa_info_id AS idExam "
+            . "FROM exa_info_asig_alum "
+            . "INNER JOIN usuarios_alumnos ON usuarios_alumnos.id=exa_info_asig_alum.alumno_id "
+            . "INNER JOIN exa_info_asig ON exa_info_asig_alum.exa_info_asig_id = exa_info_asig.id "
+            . "WHERE exa_info_asig_alum.exa_info_asig_id='$idAsig'  ";
     $resGetIDAlums = $con->query($sqlGetIDAlums);
     if($resGetIDAlums->num_rows > 0){
         while($rowGetIDAlum = $resGetIDAlums->fetch_assoc()){
             $idAsigAlum = $rowGetIDAlum['idExaInfAsigAlum'];
-            $sqlGetResultInfo = " SELECT * FROM est_exa_result_info WHERE exa_info_asig_alum_id = '$idAsigAlum' ORDER BY est_exa_result_info.id DESC ";
+            $idExam = $rowGetIDAlum['idExam'];
+            $sqlGetResultInfo = " SELECT * FROM est_exa_result_info "
+                . "WHERE exa_info_asig_alum_id = '$idAsigAlum' "
+                . " AND est_exa_result_info.exa_info_id = '$idExam' "
+                . "ORDER BY est_exa_result_info.id DESC ";
             $resGetResultInfo = $con->query($sqlGetResultInfo);
             $nombreAlum = $rowGetIDAlum['nombreAlum'];
             $pregResp = '';
@@ -51,7 +57,7 @@
     }
   
     if($ban){
-        echo json_encode(array("error"=>0, "dataRes"=>$arrExaInfoAsigs));
+        echo json_encode(array("error"=>0, "dataRes"=>$arrExaInfoAsigs, "sql"=>$sqlGetIDAlums));
     }else{
         echo json_encode(array("error"=>1, "msgErr"=>$msgErr));
     }
