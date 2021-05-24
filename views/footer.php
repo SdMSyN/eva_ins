@@ -1,5 +1,5 @@
-<footer class="footer">
-            <p class="textFoot">&copy; Julio, 2016, Desarrollado por <b><a href="http://softlutions.biz" target="_blank">Business Software Solutions</a></b></p>
+		<footer class="footer">
+            <p>Desarrollado por <a href="http://solucionesynegocios.com.mx" target="_blank"><b>Software de México: Soluciones y Negocios S.A.S. de C.V.</b> <img src="../assets/obj/ico_nube.png" width="30px"></a> 2018</p>
         </footer>
     </body>
 </html>
