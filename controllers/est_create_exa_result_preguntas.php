@@ -58,7 +58,7 @@
                     $rowGetCalifResp = $resGetCalifResp->fetch_assoc();
                     $califResp = $rowGetCalifResp['correcta'];
                     //$msgErr .= '--'.$califResp.'<br>';
-                    $arrResp[] = array('idPreg'=>$idPreg, 'typeResp'=>$tipoRespPreg, 'idRespTmp'=>$idRespTmp, 'idResp'=>'', 'resp'=>$respResp, 'calif'=>$califResp);
+                    $arrResp[] = array('idPreg'=>$idPreg, 'typeResp'=>$tipoRespPreg, 'idRespTmp'=>$idRespTmp, 'idResp'=>$respResp, 'resp'=>$respResp, 'calif'=>$califResp);
                     if($califResp == 1){
                         $numCorr++;
                         $valorEst += $valorPreg;
@@ -68,24 +68,28 @@
                 }else if($tipoRespResp == 2){
                     $respResp2 = explode(",",$respResp);
                     $banResp = true;
-                    for($i =0; $i < count($respResp2); $i++){
-                        $idRespResp = $respResp2[$i];
-                        $sqlGetCalifResp = "SELECT correcta FROM $tBResp WHERE id='$idRespResp' ";
-                        $resGetCalifResp = $con->query($sqlGetCalifResp);
-                        $rowGetCalifResp = $resGetCalifResp->fetch_assoc();
-                        $califRespTmp = $rowGetCalifResp['correcta'];
-                        if($califRespTmp == 0){
-                            $banResp = false;
-                            break;
-                        }else continue;
-                        //$msgErr .= '--'.$califResp.'<br>';
+                    if( count( $respResp2 ) > 1 ){
+		        for($i = 0; $i < count($respResp2); $i++){
+                            $idRespResp = $respResp2[$i];
+                            $sqlGetCalifResp = "SELECT correcta FROM $tBResp WHERE id='$idRespResp' ";
+                            $resGetCalifResp = $con->query($sqlGetCalifResp);
+                            $rowGetCalifResp = $resGetCalifResp->fetch_assoc();
+                            $califRespTmp = $rowGetCalifResp['correcta'];
+                            if($califRespTmp == 0){
+                                $banResp = false;
+                                break;
+                            }else continue;
+                            //$msgErr .= '--'.$califResp.'<br>';
+                        }
+                    }else{
+                        $banResp = false;
                     }
                     if($banResp){
-                        $arrResp[] = array('idPreg'=>$idPreg, 'typeResp'=>$tipoRespPreg, 'idRespTmp'=>$idRespTmp, 'idResp'=>'', 'resp'=>$respResp, 'calif'=>1);
+                        $arrResp[] = array('idPreg'=>$idPreg, 'typeResp'=>$tipoRespPreg, 'idRespTmp'=>$idRespTmp, 'idResp'=>0, 'resp'=>$respResp, 'calif'=>1);
                         $numCorr++;
                         $valorEst += $valorPreg;
                     }else{
-                        $arrResp[] = array('idPreg'=>$idPreg, 'typeResp'=>$tipoRespPreg, 'idRespTmp'=>$idRespTmp, 'idResp'=>'', 'resp'=>$respResp, 'calif'=>0);
+                        $arrResp[] = array('idPreg'=>$idPreg, 'typeResp'=>$tipoRespPreg, 'idRespTmp'=>$idRespTmp, 'idResp'=>0, 'resp'=>$respResp, 'calif'=>0);
                         $numErr++;
                     }
                 }else if($tipoRespResp == 3){
@@ -133,7 +137,7 @@
             }else{
                 //$ban = false;
                 $msgErr .= 'No contestaste esta pregunta, burro.'.$idPreg.'<br>'.$con->error;
-                $arrResp[] = array('idPreg'=>$idPreg, 'typeResp'=>$tipoRespPreg, 'idRespTmp'=>'', 'idResp'=>'', 'resp'=>'', 'calif'=>2);
+                $arrResp[] = array('idPreg'=>$idPreg, 'typeResp'=>$tipoRespPreg, 'idRespTmp'=>'0', 'idResp'=>'0', 'resp'=>'', 'calif'=>2);
                 $numSinResp++;
                 continue;
             }
@@ -186,7 +190,7 @@
                             . "(exa_info_id, exa_info_asig_alum_id, alumno_id, pregunta_id, tipo_resp_id, "
                             . "respuesta_id, respuesta, exa_result_info_id, calificacion, creado, actualizado) "
                             . "VALUES ('$idExam','$idExamAsigAlum','$idUser','$idPregData','$typeRespData',"
-                            . "'','$respData','$idResultExam','$califArr','$dateNow','$dateNow') ";
+                            . "'$idRespData','$respData','$idResultExam','$califArr','$dateNow','$dateNow') ";
                 }else if($datosRespPreg['typeResp'] == 3 || $datosRespPreg['typeResp'] == 4){
                     $sqlInsertResultPreg = "INSERT INTO $tExaResultPregs "
                             . "(exa_info_id, exa_info_asig_alum_id, alumno_id, pregunta_id, tipo_resp_id, "

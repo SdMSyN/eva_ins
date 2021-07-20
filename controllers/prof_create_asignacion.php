@@ -25,7 +25,7 @@
     
     $fechaResult = '';
     if($showResult == 0){
-        $fechaResult = NULL;
+        $fechaResult = $endF . " " . $endH ;
     }else if($showResult == 1){
         $fechaResult = $end;
     }else if($showResult == 2){

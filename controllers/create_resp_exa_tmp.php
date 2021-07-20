@@ -9,15 +9,16 @@
     $idExamAsigAlum = $_POST['idExamAsigAlum'];
     $idPreg = $_POST['idPreg'];
     $tipoResp = $_POST['tipoResp'];
-    $resp = (isset($_POST['resp'])) ? $_POST['resp'] : null;//según tipo de respuesta validar para leer valores
+    $resp = (isset($_POST['resp'])) ? $_POST['resp'] : "";//según tipo de respuesta validar para leer valores
     echo $idUser.'--'.$idExam.'--'.$idExamAsigAlum.'--'.$idPreg.'--'.$tipoResp.'--'.$resp;
     $ban = true;
     $msgErr = '';
-    if($resp != null){//si hay algo en la respuesta haz algo, si no nada
+    if($resp != ""){//si hay algo en la respuesta haz algo, si no nada
         $sqlGetRespTmp = "SELECT id FROM $tExaTmp "
                 . "WHERE alumno_id='$idUser' AND exa_info_id='$idExam' AND exa_info_asig_alum_id='$idExamAsigAlum' "
                 . "AND pregunta_id='$idPreg' AND tipo_resp_id='$tipoResp' ";
         $resGetIdRespTmp = $con->query($sqlGetRespTmp);
+	// echo ' -- SQLRespTmp: '.$sqlGetRespTmp;
         if($resGetIdRespTmp->num_rows > 0){ //si existe la respuesta, actualiza
             $rowGetIdRespTmp = $resGetIdRespTmp->fetch_assoc();
             $idRespTmp = $rowGetIdRespTmp['id'];
@@ -30,6 +31,7 @@
                     $respCheck .= ($i == 0) ? ''.$resp[$i] : ','.$resp[$i];
                 }
                 $sqlUpdateRespTmp = "UPDATE $tExaTmp SET respuesta = '$respCheck' WHERE id='$idRespTmp' ";
+		// echo ' -- SqlUpdate: ' . $sqlUpdateRespTmp;
             }else if($tipoResp == 3){
                 $idText = $_POST['idText'];
                 $sqlUpdateRespTmp = "UPDATE $tExaTmp SET respuesta = '$resp', respuesta_id='$idText' WHERE id='$idRespTmp' ";
@@ -54,16 +56,16 @@
             }
         }else{//si no existe la respuesta inserta
             if($tipoResp == 1){
-                $sqlInsertRespTmp = "INSERT INTO $tExaTmp (alumno_id, exa_info_id, exa_info_asig_alum_id, pregunta_id, tipo_resp_id, respuesta, creado) "
-                        . "VALUES ('$idUser', '$idExam', '$idExamAsigAlum', '$idPreg', '$tipoResp', '$resp', '$dateNow')";
+                $sqlInsertRespTmp = "INSERT INTO $tExaTmp (alumno_id, exa_info_id, exa_info_asig_alum_id, pregunta_id, tipo_resp_id, respuesta_id, respuesta, creado) "
+                        . "VALUES ('$idUser', '$idExam', '$idExamAsigAlum', '$idPreg', '$tipoResp', '$resp', '$resp', '$dateNow')";
             }else if($tipoResp == 2){
                 $sizeCheck = count($resp);
                 $respCheck = '';
                 for($i = 0; $i < $sizeCheck; $i++){
                     $respCheck .= ($i == 0) ? ''.$resp[$i] : ','.$resp[$i];
                 }
-                $sqlInsertRespTmp = "INSERT INTO $tExaTmp (alumno_id, exa_info_id, exa_info_asig_alum_id, pregunta_id, tipo_resp_id, respuesta, creado) "
-                        . "VALUES ('$idUser', '$idExam', '$idExamAsigAlum', '$idPreg', '$tipoResp', '$respCheck', '$dateNow')";
+                $sqlInsertRespTmp = "INSERT INTO $tExaTmp (alumno_id, exa_info_id, exa_info_asig_alum_id, pregunta_id, tipo_resp_id, respuesta_id, respuesta, creado) "
+                        . "VALUES ('$idUser', '$idExam', '$idExamAsigAlum', '$idPreg', '$tipoResp', 0, '$respCheck', '$dateNow')";
             }else if($tipoResp == 3){
                 $idText = $_POST['idText'];
                 $sqlInsertRespTmp = "INSERT INTO $tExaTmp "
